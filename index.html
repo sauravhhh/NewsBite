@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Daily Herald</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: #f8f6f0;
+      font-family: 'Times New Roman', Times, serif;
+      color: #1a1a1a;
+      line-height: 1.4;
+    }
+    
+    .newspaper {
+      max-width: 800px;
+      margin: 10px auto;
+      background: #fefefe;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+      border: 1px solid #ddd;
+    }
+    
+    .masthead {
+      text-align: center;
+      border-bottom: 3px double #000;
+      padding: 20px 10px 15px;
+      background: linear-gradient(to bottom, #fff 0%, #f8f6f0 100%);
+    }
+    
+    .newspaper-title {
+      font-size: 3rem;
+      font-weight: 900;
+      letter-spacing: 3px;
+      margin: 0;
+      text-transform: uppercase;
+      font-family: 'Times New Roman', serif;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    
+    .date-line {
+      font-size: 0.9rem;
+      margin: 5px 0;
+      font-style: italic;
+      color: #666;
+    }
+    
+    .tagline {
+      font-size: 0.8rem;
+      color: #888;
+      margin: 10px 0 0;
+      font-style: italic;
+    }
+    
+    .search-section {
+      background: #f5f3f0;
+      padding: 20px;
+      border-bottom: 2px solid #000;
+    }
+    
+    .search-box {
+      display: flex;
+      gap: 10px;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    
+    input[type="text"] {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #000;
+      font-size: 1rem;
+      font-family: 'Times New Roman', serif;
+      background: #fff;
+    }
+    
+    button {
+      padding: 12px 20px;
+      background: #000;
+      color: #fff;
+      border: none;
+      font-family: 'Times New Roman', serif;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    
+    button:hover {
+      background: #333;
+    }
+    
+    .news-content {
+      padding: 20px;
+    }
+    
+    .section-header {
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      border-bottom: 2px solid #000;
+      padding-bottom: 5px;
+      margin: 20px 0 15px;
+      letter-spacing: 1px;
+    }
+    
+    .news-columns {
+      columns: 1;
+      column-gap: 30px;
+    }
+    
+    .news-item {
+      break-inside: avoid;
+      margin-bottom: 25px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .news-headline {
+      font-size: 1.3rem;
+      font-weight: bold;
+      margin-bottom: 8px;
+      line-height: 1.2;
+      color: #000;
+    }
+    
+    .news-byline {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 10px;
+      font-style: italic;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .news-text {
+      font-size: 1rem;
+      text-align: justify;
+      margin-bottom: 10px;
+    }
+    
+    .read-more {
+      color: #000;
+      text-decoration: underline;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    
+    .read-more:hover {
+      color: #333;
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 20px;
+      border-top: 2px solid #000;
+      background: #f5f3f0;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    @media (max-width: 768px) {
+      .newspaper { margin: 5px; }
+      .newspaper-title { font-size: 2rem; letter-spacing: 1px; }
+      .search-box { flex-direction: column; }
+      input[type="text"], button { width: 100%; box-sizing: border-box; }
+      .news-columns { columns: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="newspaper">
+    <header class="masthead">
+      <h1 class="newspaper-title">The Daily Herald</h1>
+      <div class="date-line" id="current-date"></div>
+      <div class="tagline">"All The News That's Fit To Search"</div>
+    </header>
+    
+    <div class="search-section">
+      <div class="search-box">
+        <input id="topic" type="text" placeholder="Enter news topic..." />
+        <button onclick="fetchNews()">Search</button>
+      </div>
+    </div>
+    
+    <div class="news-content">
+      <div class="section-header" id="section-title" style="display:none;">Latest Headlines</div>
+      <div class="news-columns" id="news-list"></div>
+    </div>
+    
+    <footer class="footer">
+      made with ❤️ by sauravhhh
+    </footer>
+  </div>
+
+  <script>
+    // Display current date
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+
+    async function fetchNews() {
+      const topic = document.getElementById('topic').value.trim();
+      if(!topic) return;
+      
+      const apiKey = 'pub_9790a5be6f2c423caa64c5a549dca89a';
+      const url = `https://newsdata.io/api/1/news?apikey=${apiKey}&q=${encodeURIComponent(topic)}&language=en`;
+
+      document.getElementById('news-list').innerHTML = '<div style="text-align:center;font-style:italic;padding:20px;">Gathering the latest reports...</div>';
+      document.getElementById('section-title').style.display = 'block';
+      document.getElementById('section-title').textContent = topic.toUpperCase() + ' NEWS';
+
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (!data.results || data.results.length === 0) {
+          document.getElementById('news-list').innerHTML = '<div style="text-align:center;font-style:italic;padding:20px;">No stories found on this topic.</div>';
+          return;
+        }
+
+        let html = '';
+        for(const article of data.results.slice(0,8)) {
+          const pubDate = article.pubDate ? new Date(article.pubDate).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+          }) : 'Recent';
+          
+          html += `
+            <article class="news-item">
+              <h2 class="news-headline">${article.title || 'Untitled Story'}</h2>
+              <div class="news-byline">Published ${pubDate} ${article.source_id ? '• ' + article.source_id.toUpperCase() : ''}</div>
+              <p class="news-text">${article.description || 'Full story details unavailable.'}</p>
+              <a href="${article.link}" target="_blank" rel="noopener" class="read-more">Continue Reading →</a>
+            </article>
+          `;
+        }
+        document.getElementById('news-list').innerHTML = html;
+      } catch (e) {
+        document.getElementById('news-list').innerHTML = '<div style="text-align:center;font-style:italic;padding:20px;">Unable to retrieve news at this time. Please try again.</div>';
+      }
+    }
+
+    // Enter key functionality
+    document.getElementById('topic').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        fetchNews();
+      }
+    });
+  </script>
+</body>
+          </html>
+          
