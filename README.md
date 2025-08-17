@@ -1,4 +1,4 @@
-# 📰 The Daily Herald
+# 📰 The NewsBite
 
 A beautiful, mobile-friendly news reading website styled like a traditional newspaper. Built with pure HTML, CSS, and JavaScript using the NewsData.io API.
 
