@@ -208,7 +208,7 @@
       const topic = document.getElementById('topic').value.trim();
       if(!topic) return;
       
-      const apiKey = 'pub_9790a5be6f2c423caa64c5a549dca89a';
+      const apiKey = 'YOUR_NEWSDATA_API_KEY';
       const url = `https://newsdata.io/api/1/news?apikey=${apiKey}&q=${encodeURIComponent(topic)}&language=en`;
 
       document.getElementById('news-list').innerHTML = '<div style="text-align:center;font-style:italic;padding:20px;">Gathering the latest reports...</div>';
